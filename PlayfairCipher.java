@@ -28,4 +28,38 @@ public class PlayfairCipher {
 
 
 
+    
+    public String encrypt(String text) {
+        List<String> pairs = prepareText(text);
+        StringBuilder result = new StringBuilder();
+
+        for (String pair : pairs) {
+            char a = pair.charAt(0);
+            char b = pair.charAt(1);
+
+            int[] posA = findPosition(a);
+            int[] posB = findPosition(b);
+
+            if (posA[0] == posB[0]) {
+                result.append(matrix[posA[0]][(posA[1] + 1) % 5]);
+                result.append(matrix[posB[0]][(posB[1] + 1) % 5]);
+            }
+            else if (posA[1] == posB[1]) {
+                result.append(matrix[(posA[0] + 1) % 5][posA[1]]);
+                result.append(matrix[(posB[0] + 1) % 5][posB[1]]);
+            }
+            else {
+                result.append(matrix[posA[0]][posB[1]]);
+                result.append(matrix[posB[0]][posA[1]]);
+            }
+        }
+
+        return result.toString();
+    }
+
+
+
+
+
+
 }
