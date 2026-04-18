@@ -118,6 +118,40 @@ private List<String> prepareText(String text) {
         return result.toString();
     }
 
+    public String decrypt(String text) {
+        text = text.toUpperCase().replaceAll("[^A-Z]", "");
+
+        List<String> pairs = new ArrayList<>();
+        for (int i = 0; i < text.length(); i += 2) {
+            pairs.add(text.substring(i, i + 2));
+        }
+
+        StringBuilder result = new StringBuilder();
+
+        for (String pair : pairs) {
+            char a = pair.charAt(0);
+            char b = pair.charAt(1);
+
+            int[] posA = findPosition(a);
+            int[] posB = findPosition(b);
+
+            if (posA[0] == posB[0]) {
+                result.append(matrix[posA[0]][(posA[1] + 4) % 5]);
+                result.append(matrix[posB[0]][(posB[1] + 4) % 5]);
+            }
+            else if (posA[1] == posB[1]) {
+                result.append(matrix[(posA[0] + 4) % 5][posA[1]]);
+                result.append(matrix[(posB[0] + 4) % 5][posB[1]]);
+            }
+            else {
+                result.append(matrix[posA[0]][posB[1]]);
+                result.append(matrix[posB[0]][posA[1]]);
+            }
+        }
+
+        return result.toString();
+    }
+
 
 
 
