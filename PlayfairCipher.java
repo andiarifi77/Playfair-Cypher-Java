@@ -65,7 +65,29 @@ private int[] findPosition(char c) {
     return null;
 }
 
+private List<String> prepareText(String text) {
+    text = text.toUpperCase().replaceAll("[^A-Z]", "").replace("J", "I");
+    List<String> pairs = new ArrayList<>();
 
+    for (int i = 0; i < text.length(); i += 2) {
+        char a = text.charAt(i);
+        char b;
+
+        if (i + 1 < text.length()) {
+            b = text.charAt(i + 1);
+            if (a == b) {
+                b = 'X';
+                i--;
+            }
+        } else {
+            b = 'X';
+        }
+
+        pairs.add("" + a + b);
+    }
+
+    return pairs;
+}
 
     
     public String encrypt(String text) {
