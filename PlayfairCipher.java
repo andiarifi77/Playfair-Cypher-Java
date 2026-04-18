@@ -23,6 +23,34 @@ public class PlayfairCipher {
         return result.toString();
     }
 
+    private void generateMatrix() {
+        boolean[] used = new boolean[26];
+        used['J' - 'A'] = true;
+
+        int row = 0, col = 0;
+
+        for (char c : key.toCharArray()) {
+            if (!used[c - 'A']) {
+                matrix[row][col++] = c;
+                used[c - 'A'] = true;
+                if (col == 5) {
+                    col = 0;
+                    row++;
+                }
+            }
+        }
+
+        for (char c = 'A'; c <= 'Z'; c++) {
+            if (!used[c - 'A']) {
+                matrix[row][col++] = c;
+                if (col == 5) {
+                    col = 0;
+                    row++;
+                }
+            }
+        }
+    }
+
 
 private int[] findPosition(char c) {
     if (c == 'J') c = 'I';
