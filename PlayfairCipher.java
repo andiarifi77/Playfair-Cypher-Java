@@ -10,7 +10,7 @@ public class PlayfairCipher {
         generateMatrix();
     }
 
-    // Përgatit key (heq duplikatet, J -> I)
+    
     private String prepareKey(String key) {
         key = key.toUpperCase().replaceAll("[^A-Z]", "").replace("J", "I");
         StringBuilder result = new StringBuilder();
@@ -23,6 +23,7 @@ public class PlayfairCipher {
         return result.toString();
     }
 
+    
     private void generateMatrix() {
         boolean[] used = new boolean[26];
         used['J' - 'A'] = true;
@@ -51,43 +52,44 @@ public class PlayfairCipher {
         }
     }
 
+    
+    private int[] findPosition(char c) {
+        if (c == 'J') c = 'I';
 
-private int[] findPosition(char c) {
-    if (c == 'J') c = 'I';
-
-    for (int i = 0; i < 5; i++) {
-        for (int j = 0; j < 5; j++) {
-            if (matrix[i][j] == c) {
-                return new int[]{i, j};
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (matrix[i][j] == c) {
+                    return new int[]{i, j};
+                }
             }
         }
+        return null;
     }
-    return null;
-}
 
-private List<String> prepareText(String text) {
-    text = text.toUpperCase().replaceAll("[^A-Z]", "").replace("J", "I");
-    List<String> pairs = new ArrayList<>();
+    
+    private List<String> prepareText(String text) {
+        text = text.toUpperCase().replaceAll("[^A-Z]", "").replace("J", "I");
+        List<String> pairs = new ArrayList<>();
 
-    for (int i = 0; i < text.length(); i += 2) {
-        char a = text.charAt(i);
-        char b;
+        for (int i = 0; i < text.length(); i += 2) {
+            char a = text.charAt(i);
+            char b;
 
-        if (i + 1 < text.length()) {
-            b = text.charAt(i + 1);
-            if (a == b) {
+            if (i + 1 < text.length()) {
+                b = text.charAt(i + 1);
+                if (a == b) {
+                    b = 'X';
+                    i--;
+                }
+            } else {
                 b = 'X';
-                i--;
             }
-        } else {
-            b = 'X';
+
+            pairs.add("" + a + b);
         }
 
-        pairs.add("" + a + b);
+        return pairs;
     }
-
-    return pairs;
-}
 
     
     public String encrypt(String text) {
@@ -104,12 +106,10 @@ private List<String> prepareText(String text) {
             if (posA[0] == posB[0]) {
                 result.append(matrix[posA[0]][(posA[1] + 1) % 5]);
                 result.append(matrix[posB[0]][(posB[1] + 1) % 5]);
-            }
-            else if (posA[1] == posB[1]) {
+            } else if (posA[1] == posB[1]) {
                 result.append(matrix[(posA[0] + 1) % 5][posA[1]]);
                 result.append(matrix[(posB[0] + 1) % 5][posB[1]]);
-            }
-            else {
+            } else {
                 result.append(matrix[posA[0]][posB[1]]);
                 result.append(matrix[posB[0]][posA[1]]);
             }
@@ -118,14 +118,9 @@ private List<String> prepareText(String text) {
         return result.toString();
     }
 
+    
     public String decrypt(String text) {
-        text = text.toUpperCase().replaceAll("[^A-Z]", "");
-
-        List<String> pairs = new ArrayList<>();
-        for (int i = 0; i < text.length(); i += 2) {
-            pairs.add(text.substring(i, i + 2));
-        }
-
+        List<String> pairs = prepareText(text);
         StringBuilder result = new StringBuilder();
 
         for (String pair : pairs) {
@@ -138,12 +133,10 @@ private List<String> prepareText(String text) {
             if (posA[0] == posB[0]) {
                 result.append(matrix[posA[0]][(posA[1] + 4) % 5]);
                 result.append(matrix[posB[0]][(posB[1] + 4) % 5]);
-            }
-            else if (posA[1] == posB[1]) {
+            } else if (posA[1] == posB[1]) {
                 result.append(matrix[(posA[0] + 4) % 5][posA[1]]);
                 result.append(matrix[(posB[0] + 4) % 5][posB[1]]);
-            }
-            else {
+            } else {
                 result.append(matrix[posA[0]][posB[1]]);
                 result.append(matrix[posB[0]][posA[1]]);
             }
@@ -152,9 +145,37 @@ private List<String> prepareText(String text) {
         return result.toString();
     }
 
+    
+    public void printMatrix() {
+        for (char[] row : matrix) {
+            for (char c : row) {
+                System.out.print(c + " ");
+            }
+            System.out.println();
+        }
+    }
 
+    
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
 
+        System.out.print("Shkruaj key: ");
+        String key = scanner.nextLine();
 
+        PlayfairCipher pf = new PlayfairCipher(key);
 
+        System.out.println("\nMatrica 5x5:");
+        pf.printMatrix();
 
+        System.out.print("\nShkruaj mesazhin: ");
+        String text = scanner.nextLine();
+
+        String encrypted = pf.encrypt(text);
+        String decrypted = pf.decrypt(encrypted);
+
+        System.out.println("\nEncrypted: " + encrypted);
+        System.out.println("Decrypted: " + decrypted);
+
+        scanner.close();
+    }
 }
